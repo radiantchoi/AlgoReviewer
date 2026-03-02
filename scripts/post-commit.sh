@@ -22,10 +22,10 @@ echo "========================================="
 PROBLEM_INFO=$(echo "$COMMIT_MSG" | sed -E 's/^[sS][oO][lL][vV][eE]:[[:space:]]*//')
 
 # 4. 이번 커밋에서 변경/추가된 파일 중 'submissions/' 폴더에 있는 파일만 필터링합니다.
-MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD | grep "^submissions/")
+MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD | grep "^submission/")
 
 if [ -z "$MODIFIED_FILES" ]; then
-    echo "[Git Hook] submissions/ 디렉토리에 변경된 풀이 코드가 없습니다."
+    echo "[Git Hook] submission/ 디렉토리에 변경된 풀이 코드가 없습니다."
     exit 0
 fi
 
@@ -40,7 +40,7 @@ for FILE in $MODIFIED_FILES; do
 done
 
 # 6. 생성된 리뷰 마크다운 파일을 Git에 추가하고 자동 커밋합니다.
-git add reviews/
+git add review/
 
 # 변경된 사항(새로 생성된 파일)이 있는지 확인합니다.
 if ! git diff --cached --quiet; then
