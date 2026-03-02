@@ -1,0 +1,9 @@
+# Python 환경 및 보안 파일 무시
+.reviewer/.venv/
+.reviewer/.env
+.reviewer/__pycache__/
+.reviewer/*.pyc
+.reviewer/.uv/
+
+# (선택) macOS 환경 파일
+.DS_Store
