@@ -24,7 +24,7 @@ class GeminiReviewer(Reviewer):
     def generate_review(self, prompt: str, code: str) -> str:
         full_text = f"{prompt}\n\n코드:\n```\n{code}\n```"
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash", contents=full_text
+            model="gemini-3.1-flash-lite", contents=full_text
         )
         return response.text if response.text else "No Review Generated"
 
