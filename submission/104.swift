@@ -40,4 +40,13 @@ class Solution {
         traverse(&result, currentDepth + 1, root.left)
         traverse(&result, currentDepth + 1, root.right)
     }
+
+    func maxDepth2(_ root: TreeNode?) -> Int {
+        guard let root else { return 0 }
+
+        let maxLeft = maxDepth2(root.left)
+        let maxRight = maxDepth2(root.right)
+
+        return max(maxLeft, maxRight) + 1
+    }
 }
