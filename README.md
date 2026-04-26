@@ -10,11 +10,21 @@
 ### 1. 환경 변수 설정
 
 * `.reviewer` 디렉토리 내에 `.env` 파일을 생성합니다.
-* 아래와 같이 사용할 LLM 프로바이더와 API 키를 입력합니다. (현재 Gemini 기본 지원, 향후 로컬 LLM 전환 상정)
+* 아래와 같이 사용할 LLM 프로바이더를 설정합니다. (Gemini 및 LM Studio를 통한 로컬 LLM 지원)
 
-```
+#### Gemini 사용 시
+```env
 LLM_PROVIDER=gemini
 GEMINI_API_KEY=당신의_API_키
+```
+
+#### 로컬 LLM (LM Studio) 사용 시
+LM Studio를 실행하고 로컬 서버를 구동한 후 아래와 같이 설정합니다.
+```env
+LLM_PROVIDER=local
+# 아래 항목들은 선택 사항이며, LM Studio의 포트나 모델 이름이 다를 경우에만 작성하세요.
+LM_STUDIO_API_URL=http://localhost:1234/v1/chat/completions
+LM_STUDIO_MODEL=local-model
 ```
 
 * *참고: 의존성 패키지는 `uv.lock`에 기록되어 있어 별도의 패키지 설치 명령어(`uv add ...`) 없이 훅 실행 시 자동 적용됩니다.*
