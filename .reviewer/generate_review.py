@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import requests
 from abc import ABC, abstractmethod
 from datetime import datetime
 
@@ -29,13 +30,38 @@ class GeminiReviewer(Reviewer):
         return response.text if response.text else "No Review Generated"
 
 
+class LMStudioReviewer(Reviewer):
+    def __init__(self):
+        self.api_url = os.getenv("LM_STUDIO_API_URL", "http://localhost:1234/v1/chat/completions")
+        self.model = os.getenv("LM_STUDIO_MODEL", "local-model")
+
+    def generate_review(self, prompt: str, code: str) -> str:
+        full_text = f"{prompt}\n\n코드:\n```\n{code}\n```"
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": "You are a helpful and experienced senior algorithmic code reviewer."},
+                {"role": "user", "content": full_text}
+            ],
+            "temperature": 0.7
+        }
+        
+        try:
+            response = requests.post(self.api_url, json=payload, headers={"Content-Type": "application/json"})
+            response.raise_for_status()
+            data = response.json()
+            return data.get("choices", [{}])[0].get("message", {}).get("content", "No Review Generated")
+        except Exception as e:
+            return f"Error communicating with LM Studio: {e}"
+
+
 def get_reviewer() -> Reviewer:
-    provider = os.getenv("LLM_PROVIDER", "gemini").lower()
+    provider = os.getenv("LLM_PROVIDER", "local").lower()
 
     if provider == "gemini":
         return GeminiReviewer()
 
-    return GeminiReviewer()
+    return LMStudioReviewer()
 
 
 def extract_problem_info(code_content: str, ext: str) -> str:
