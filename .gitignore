@@ -7,3 +7,6 @@
 
 # (선택) macOS 환경 파일
 .DS_Store
+
+# 로컬 학습 문서
+CURRICULUM.md
