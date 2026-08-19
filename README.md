@@ -10,7 +10,7 @@
 ### 1. 환경 변수 설정
 
 * `.reviewer` 디렉토리 내에 `.env` 파일을 생성합니다.
-* 아래와 같이 사용할 LLM 프로바이더를 설정합니다. (Gemini 및 LM Studio를 통한 로컬 LLM 지원)
+* 아래와 같이 사용할 LLM 프로바이더를 설정합니다. (Gemini 및 oMLX를 통한 로컬 LLM 지원)
 
 #### Gemini 사용 시
 ```env
@@ -18,14 +18,16 @@ LLM_PROVIDER=gemini
 GEMINI_API_KEY=당신의_API_키
 ```
 
-#### 로컬 LLM (LM Studio) 사용 시
-LM Studio를 실행하고 로컬 서버를 구동한 후 아래와 같이 설정합니다.
+#### 로컬 LLM (oMLX) 사용 시
+oMLX 서버를 8808 포트로 구동한 후 아래와 같이 설정합니다.
 ```env
 LLM_PROVIDER=local
-# 아래 항목들은 선택 사항이며, LM Studio의 포트나 모델 이름이 다를 경우에만 작성하세요.
-LM_STUDIO_API_URL=http://localhost:1234/v1/chat/completions
-LM_STUDIO_MODEL=local-model
+OMLX_API_URL=http://127.0.0.1:8808/v1/chat/completions
+OMLX_MODEL=oMLX에_등록된_모델_ID
+OMLX_API_KEY=당신의_oMLX_API_키
 ```
+
+* `OMLX_API_KEY`는 필수이며 HTTP `Authorization: Bearer` 헤더로 전달됩니다.
 
 * *참고: 의존성 패키지는 `uv.lock`에 기록되어 있어 별도의 패키지 설치 명령어(`uv add ...`) 없이 훅 실행 시 자동 적용됩니다.*
 

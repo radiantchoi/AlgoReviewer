@@ -30,10 +30,16 @@ class GeminiReviewer(Reviewer):
         return response.text if response.text else "No Review Generated"
 
 
-class LMStudioReviewer(Reviewer):
+class OMLXReviewer(Reviewer):
     def __init__(self):
-        self.api_url = os.getenv("LM_STUDIO_API_URL", "http://localhost:1234/v1/chat/completions")
-        self.model = os.getenv("LM_STUDIO_MODEL", "local-model")
+        self.api_url = os.getenv(
+            "OMLX_API_URL", "http://127.0.0.1:8808/v1/chat/completions"
+        )
+        self.model = os.getenv("OMLX_MODEL", "local-model")
+        self.api_key = os.getenv("OMLX_API_KEY")
+
+        if not self.api_key:
+            raise ValueError("OMLX_API_KEY environment variable is required")
 
     def generate_review(self, prompt: str, code: str) -> str:
         full_text = f"{prompt}\n\n코드:\n```\n{code}\n```"
@@ -45,14 +51,24 @@ class LMStudioReviewer(Reviewer):
             ],
             "temperature": 0.7
         }
-        
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}",
+        }
+
         try:
-            response = requests.post(self.api_url, json=payload, headers={"Content-Type": "application/json"})
+            response = requests.post(
+                self.api_url,
+                json=payload,
+                headers=headers,
+                timeout=300,
+            )
             response.raise_for_status()
             data = response.json()
             return data.get("choices", [{}])[0].get("message", {}).get("content", "No Review Generated")
         except Exception as e:
-            return f"Error communicating with LM Studio: {e}"
+            return f"Error communicating with oMLX: {e}"
 
 
 def get_reviewer() -> Reviewer:
@@ -61,7 +77,7 @@ def get_reviewer() -> Reviewer:
     if provider == "gemini":
         return GeminiReviewer()
 
-    return LMStudioReviewer()
+    return OMLXReviewer()
 
 
 def extract_problem_info(code_content: str, ext: str) -> str:
