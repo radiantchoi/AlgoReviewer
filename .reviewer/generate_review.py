@@ -36,6 +36,7 @@ class OMLXReviewer(Reviewer):
             "OMLX_API_URL", "http://127.0.0.1:8808/v1/chat/completions"
         )
         self.model = os.getenv("OMLX_MODEL", "local-model")
+        self.max_tokens = int(os.getenv("OMLX_MAX_TOKENS", "8192"))
         self.api_key = os.getenv("OMLX_API_KEY")
 
         if not self.api_key:
@@ -49,7 +50,8 @@ class OMLXReviewer(Reviewer):
                 {"role": "system", "content": "You are a helpful and experienced senior algorithmic code reviewer."},
                 {"role": "user", "content": full_text}
             ],
-            "temperature": 0.7
+            "temperature": 0.7,
+            "max_tokens": self.max_tokens,
         }
 
         headers = {

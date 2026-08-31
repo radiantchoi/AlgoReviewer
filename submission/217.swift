@@ -5,7 +5,7 @@ class Solution {
         var occured: [Int: Bool] = [:]
 
         for num in nums {
-            if let occurence = occured[num] {
+            if let isOccured = occured[num] {
                 return true
             } else {
                 occured[num] = true
