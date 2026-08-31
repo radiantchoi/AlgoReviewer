@@ -1,4 +1,4 @@
-// LeetCode No.271 Contains Duplicate
+// LeetCode No.217 Contains Duplicate
 
 class Solution {
     func containsDuplicate(_ nums: [Int]) -> Bool {
