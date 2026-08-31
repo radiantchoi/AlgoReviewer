@@ -2,13 +2,13 @@
 
 class Solution {
     func containsDuplicate(_ nums: [Int]) -> Bool {
-        var occurences: [Int: Int] = [:]
+        var occured: [Int: Bool] = [:]
 
         for num in nums {
-            if let occurence = occurences[num] {
+            if let occurence = occured[num] {
                 return true
             } else {
-                occurences[num] = 1
+                occured[num] = true
             }
         }
 
