@@ -2,14 +2,12 @@
 
 class Solution {
     func containsDuplicate(_ nums: [Int]) -> Bool {
-        var occured: [Int: Bool] = [:]
+        var occured = Set<Int>()
 
         for num in nums {
-            if let isOccured = occured[num] {
-                return true
-            } else {
-                occured[num] = true
-            }
+            if occured.contains(num) { return true }
+
+            occured.insert(num)
         }
 
         return false
