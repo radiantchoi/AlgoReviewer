@@ -22,7 +22,7 @@ class Solution {
                 }
             }
         }
-        
+
         return []
     }
 
@@ -38,6 +38,28 @@ class Solution {
             }
 
             pool[number] = offset
+        }
+
+        return []
+    }
+
+    // try after a while - two pointer O(nlogn)
+    func twoSum3(_ nums: [Int], _ target: Int) -> [Int] {
+        let pairs = nums.enumerated().sorted { $0.element < $1.element }
+
+        var left = 0
+        var right = pairs.count - 1
+
+        while left < right {
+            let current = pairs[left].element + pairs[right].element
+
+            if current == target {
+                return [pairs[left].offset, pairs[right].offset]
+            } else if current < target {
+                left += 1
+            } else {
+                right -= 1
+            }
         }
 
         return []
