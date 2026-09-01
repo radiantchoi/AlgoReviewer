@@ -36,7 +36,6 @@ class OMLXReviewer(Reviewer):
             "OMLX_API_URL", "http://127.0.0.1:8808/v1/chat/completions"
         )
         self.model = os.getenv("OMLX_MODEL", "local-model")
-        self.max_tokens = int(os.getenv("OMLX_MAX_TOKENS", "8192"))
         self.api_key = os.getenv("OMLX_API_KEY")
 
         if not self.api_key:
@@ -47,11 +46,17 @@ class OMLXReviewer(Reviewer):
         payload = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": "You are a helpful and experienced senior algorithmic code reviewer."},
+                {
+                    "role": "system",
+                    "content": (
+                        "당신은 숙련된 시니어 알고리즘 코드 리뷰어입니다. "
+                        "최종 리뷰는 분석이나 추론 과정을 노출하지 말고, "
+                        "반드시 한국어 마크다운으로만 작성하세요."
+                    ),
+                },
                 {"role": "user", "content": full_text}
             ],
             "temperature": 0.7,
-            "max_tokens": self.max_tokens,
         }
 
         headers = {
