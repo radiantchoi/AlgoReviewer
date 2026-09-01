@@ -24,7 +24,6 @@ oMLX 서버를 8808 포트로 구동한 후 아래와 같이 설정합니다.
 LLM_PROVIDER=local
 OMLX_API_URL=http://127.0.0.1:8808/v1/chat/completions
 OMLX_MODEL=oMLX에_등록된_모델_ID
-OMLX_MAX_TOKENS=8192
 OMLX_API_KEY=당신의_oMLX_API_키
 ```
 
