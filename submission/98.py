@@ -10,16 +10,14 @@ class TreeNode:
 
 class Solution:
     # In LeetCode Environment, it is marked as Optional[TreeNode]. Substituted to TreeNode | None
-    def isValidBST(self, root: TreeNode | None) -> bool:
-        criteria = 2**31
-        return self.isValidNode(root, -(criteria + 1), criteria)
-
-    def isValidNode(self, root: TreeNode | None, minimum: int, maximum: int) -> bool:
-        if root is None:
+    def isValid(self, root: TreeNode | None, low: int, high: int) -> bool:
+        if not root:
             return True
-        elif root.val <= minimum or root.val >= maximum:
+        
+        if not (low < root.val < high):
             return False
+        
+        return self.isValid(root.left, low, root.val) and self.isValid(root.right, root.val, high)
 
-        return self.isValidNode(root.left, minimum, root.val) and self.isValidNode(
-            root.right, root.val, maximum
-        )
+    def isValidBST(self, root: TreeNode | None) -> bool:
+        return self.isValid(root, -2 ** 31 - 1, 2 ** 31)
