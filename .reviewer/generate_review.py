@@ -30,8 +30,14 @@ class OpenCodeReviewer(Reviewer):
         if not self.model:
             raise ValueError(
                 "OPENCODE_MODEL is required when LLM_PROVIDER=opencode "
-                "(for example: openai/gpt-6-luna#high)"
+                "(for example: openai/gpt-6-luna)"
             )
+        if "#" in self.model:
+            raise ValueError(
+                "Set the model ID in OPENCODE_MODEL and the reasoning level "
+                "separately in OPENCODE_VARIANT."
+            )
+        self.variant = os.getenv("OPENCODE_VARIANT", "").strip()
 
         if shutil.which("opencode") is None:
             raise RuntimeError(
@@ -46,18 +52,22 @@ class OpenCodeReviewer(Reviewer):
             "한국어 마크다운 리뷰만 출력하세요."
         )
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        command = [
+            "opencode",
+            "run",
+            review_prompt,
+            "--agent",
+            "plan",
+            "--model",
+            self.model,
+            "--file",
+            os.path.abspath(source_path),
+        ]
+        if self.variant:
+            command.extend(["--variant", self.variant])
+
         result = subprocess.run(
-            [
-                "opencode",
-                "run",
-                "--agent",
-                "plan",
-                "--model",
-                self.model,
-                "--file",
-                os.path.abspath(source_path),
-                review_prompt,
-            ],
+            command,
             cwd=repo_root,
             capture_output=True,
             text=True,
@@ -218,7 +228,25 @@ def write_error_log(provider: str, source_path: str, error: Exception) -> str:
         log_file.write("## Error\n\n")
         log_file.write(f"```text\n{error_detail[:4000]}\n```\n")
 
-        rejected_response = getattr(error, "response", "").strip()
+        rejected_response = ""
+        if isinstance(error, ReviewValidationError):
+            rejected_response = error.response.strip()
+        else:
+            response = getattr(error, "response", None)
+            if isinstance(response, str):
+                rejected_response = response.strip()
+            elif response is not None:
+                status_code = getattr(response, "status_code", None)
+                reason = getattr(response, "reason", None)
+                url = getattr(response, "url", None)
+                response_text = getattr(response, "text", "")
+                details = [
+                    f"HTTP status: {status_code}" if status_code is not None else "",
+                    f"Reason: {reason}" if reason else "",
+                    f"URL: {url}" if url else "",
+                    response_text.strip() if isinstance(response_text, str) else "",
+                ]
+                rejected_response = "\n".join(detail for detail in details if detail)
         if rejected_response:
             log_file.write("\n## Rejected response (truncated)\n\n")
             for line in rejected_response[:2000].splitlines():
