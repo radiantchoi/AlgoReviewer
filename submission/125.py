@@ -2,14 +2,12 @@
 
 class Solution:
     def isPalindrome(self, s: str) -> bool:
-        letters = list(
-            map(lambda x: x.lower(), filter(lambda x: x.isalpha() or x.isnumeric(), s))
-        )
+        letters = list(filter(lambda x: x.isalnum(), s.lower()))
 
         left = 0
         right = len(letters) - 1
 
-        while left < right:
+        while left <= right:
             if letters[left] != letters[right]:
                 return False
 
