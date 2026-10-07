@@ -26,12 +26,7 @@ class Reviewer(ABC):
 
 class OpenCodeReviewer(Reviewer):
     def __init__(self):
-        self.model = os.getenv("OPENCODE_MODEL")
-        if not self.model:
-            raise ValueError(
-                "OPENCODE_MODEL is required when LLM_PROVIDER=opencode "
-                "(for example: openai/gpt-6-luna)"
-            )
+        self.model = os.getenv("OPENCODE_MODEL", "").strip()
         if "#" in self.model:
             raise ValueError(
                 "Set the model ID in OPENCODE_MODEL and the reasoning level "
@@ -58,13 +53,12 @@ class OpenCodeReviewer(Reviewer):
             review_prompt,
             "--agent",
             "plan",
-            "--model",
-            self.model,
-            "--file",
-            os.path.abspath(source_path),
         ]
+        if self.model:
+            command.extend(["--model", self.model])
         if self.variant:
             command.extend(["--variant", self.variant])
+        command.extend(["--file", os.path.abspath(source_path)])
 
         result = subprocess.run(
             command,
