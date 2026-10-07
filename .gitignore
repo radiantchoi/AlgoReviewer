@@ -4,6 +4,7 @@
 .reviewer/__pycache__/
 .reviewer/*.pyc
 .reviewer/.uv/
+.reviewer/errorlogs/
 
 # (선택) macOS 환경 파일
 .DS_Store

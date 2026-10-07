@@ -35,7 +35,10 @@ for FILE in $MODIFIED_FILES; do
 
     # .reviewer 폴더로 이동하여 uv를 통해 파이썬 스크립트 실행 (상대 경로 전달)
     cd .reviewer || exit
-    uv run generate_review.py "../$FILE"
+    if ! uv run generate_review.py "../$FILE"; then
+        echo "❌ 리뷰 생성에 실패했습니다. .reviewer/errorlogs/의 로그를 확인한 뒤 solve 커밋을 amend하면 다시 시도합니다."
+        exit 1
+    fi
     cd ..
 done
 

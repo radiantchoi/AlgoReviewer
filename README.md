@@ -10,15 +10,9 @@
 ### 1. 환경 변수 설정
 
 * `.reviewer` 디렉토리 내에 `.env` 파일을 생성합니다.
-* 아래와 같이 사용할 LLM 프로바이더를 설정합니다. (Gemini 및 oMLX를 통한 로컬 LLM 지원)
+* 사용할 리뷰어를 `.reviewer/.env`의 `LLM_PROVIDER`에 지정합니다. 지원 값은 `local`과 `opencode`입니다.
 
-#### Gemini 사용 시
-```env
-LLM_PROVIDER=gemini
-GEMINI_API_KEY=당신의_API_키
-```
-
-#### 로컬 LLM (oMLX) 사용 시
+#### Local (oMLX)
 oMLX 서버를 8808 포트로 구동한 후 아래와 같이 설정합니다.
 ```env
 LLM_PROVIDER=local
@@ -28,6 +22,14 @@ OMLX_API_KEY=당신의_oMLX_API_키
 ```
 
 * `OMLX_API_KEY`는 필수이며 HTTP `Authorization: Bearer` 헤더로 전달됩니다.
+
+#### OpenCode (ChatGPT Plus/Pro OAuth)
+OpenCode를 설치한 뒤 로그인합니다. OpenCode에서 `/connect`를 실행하고 `OpenAI`와 `ChatGPT Plus/Pro`를 선택해 브라우저 인증을 완료합니다. 사용 가능한 모델 ID를 확인해 아래 설정에 지정합니다.
+```env
+LLM_PROVIDER=opencode
+OPENCODE_MODEL=openai/gpt-6-luna#high
+```
+* 리뷰 훅은 로그인된 OpenCode CLI를 비대화식으로 실행하므로, `opencode` 명령이 `PATH`에 있어야 합니다.
 
 * *참고: 의존성 패키지는 `uv.lock`에 기록되어 있어 별도의 패키지 설치 명령어(`uv add ...`) 없이 훅 실행 시 자동 적용됩니다.*
 
@@ -65,4 +67,5 @@ git commit -m "solve: LeetCode No.347 Top K Frequent Elements"
 * 커밋이 완료되는 즉시 백그라운드에서 LLM 리뷰 시스템이 동작합니다.
 * 시간/공간 복잡도, 정석 풀이, 개선점, 언어적 관용구 준수 여부를 분석합니다.
 * 결과는 `review` 디렉토리에 마크다운 파일(`.md`)로 저장되며, `review: 문제 정보 코드 리뷰`라는 메시지와 함께 자동으로 후속 커밋됩니다.
+* 리뷰 생성이 실패하거나 오류 메시지만 반환되면 리뷰 파일은 만들지 않습니다. 원인은 `.reviewer/errorlogs/` 아래 타임스탬프가 붙은 마크다운 로그에 기록되며, 실패한 `solve:` 커밋을 amend하면 다시 시도합니다.
 * *주의: GUI Git 클라이언트(SourceTree, GitHub Desktop 등)에서는 환경 변수 문제로 훅이 동작하지 않을 수 있으므로 CLI 환경 사용을 권장합니다.*
